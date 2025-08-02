@@ -63,29 +63,16 @@ Responsive design for access on any device.
 ⚙️ Tech Stack
 This project leverages a modern and robust tech stack to deliver a seamless experience.
 
-Category
 
-Technology
+Frontend: 💻 React.js
 
-Frontend
+Backend: 🚀 Node.js / 🐍 Flask (Python)
 
+Database: 🗄️ MongoDB
 
+Data Viz: 📊 Chart.js / 📈 Recharts / 🎨 D3.js
 
-Backend
-
-/
-
-Database
-
-
-
-Data Viz
-
-/
-
-File Storage
-
-/
+File Storage: ☁️ AWS S3 / 🔥 Firebase Storage
 
 🚀 Getting Started
 To get a local copy up and running, follow these simple steps.
