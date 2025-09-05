@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
-// Import data and validation
-const Category = require('../data/categories');
-const Course = require('../data/courses');
+// Import models and validation
+const Category = require('../models/Category');
+const Course = require('../models/Course');
 const validateData = require('../validation/validateData');
 
 // Validation Middleware
@@ -42,40 +42,47 @@ router.get('/validate/all', (req, res) => {
 // Routes
 
 // Get all categories
-router.get('/', (req, res) => {
-    res.json({
-        success: true,
-        data: Category,
-        total: Category.length
-    });
+router.get('/', async (req, res) => {
+    try {
+        const categories = await Category.find().sort({ id: 1 });
+        res.json({
+            success: true,
+            data: categories,
+            total: categories.length
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching categories',
+            error: error.message
+        });
+    }
 });
 
 // Get category by ID
-router.get('/:id', validateParams, (req, res) => {
-    const categoryId = req.validatedId;
-    const category = Category.find(c => c.id === categoryId);
-    
-    if (!category) {
-        return res.status(404).json({
+router.get('/:id', validateParams, async (req, res) => {
+    try {
+        const categoryId = req.validatedId;
+        const category = await Category.findOne({ id: categoryId });
+        
+        if (!category) {
+            return res.status(404).json({
+                success: false,
+                message: 'Category not found'
+            });
+        }
+        
+        res.json({
+            success: true,
+            data: category
+        });
+    } catch (error) {
+        res.status(500).json({
             success: false,
-            message: 'Category not found'
+            message: 'Error fetching category',
+            error: error.message
         });
     }
-    
-    // Validate the found category data
-    const validation = validateData.category(category);
-    if (!validation.isValid) {
-        return res.status(500).json({
-            success: false,
-            message: 'Data integrity error',
-            errors: validation.errors
-        });
-    }
-    
-    res.json({
-        success: true,
-        data: validation.data
-    });
 });
 
 // Get courses by category
