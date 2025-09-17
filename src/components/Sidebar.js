@@ -1,21 +1,52 @@
 import React, { useState } from 'react';
 
-const Sidebar = () => {
+const Sidebar = ({ user }) => {
   const [activeItem, setActiveItem] = useState('dashboard');
 
-  const mainNavItems = [
-    { id: 'dashboard', icon: 'fas fa-tachometer-alt', label: 'Dashboard', color: 'indigo' },
-    { id: 'learning-paths', icon: 'fas fa-route', label: 'My Learning Paths', color: 'emerald' },
-    { id: 'progress', icon: 'fas fa-chart-line', label: 'Progress Analytics', color: 'blue' },
-    { id: 'achievements', icon: 'fas fa-trophy', label: 'Achievements', color: 'yellow' }
-  ];
+  // Define role-specific navigation items
+  const getMainNavItems = () => {
+    const commonItems = [
+      { id: 'dashboard', icon: 'fas fa-tachometer-alt', label: 'Dashboard', color: 'indigo' }
+    ];
 
-  const resourceItems = [
-    { id: 'pdf', icon: 'fas fa-file-pdf', label: 'PDF Documents', color: 'red' },
-    { id: 'videos', icon: 'fas fa-video', label: 'Video Lectures', color: 'purple' },
-    { id: 'links', icon: 'fas fa-link', label: 'External Links', color: 'blue' },
-    { id: 'notes', icon: 'fas fa-sticky-note', label: 'My Notes', color: 'orange' }
-  ];
+    if (user?.role === 'instructor') {
+      return [
+        ...commonItems,
+        { id: 'courses', icon: 'fas fa-chalkboard-teacher', label: 'My Courses', color: 'emerald' },
+        { id: 'students', icon: 'fas fa-users', label: 'Students', color: 'blue' },
+        { id: 'analytics', icon: 'fas fa-chart-line', label: 'Course Analytics', color: 'purple' },
+        { id: 'content', icon: 'fas fa-book-open', label: 'Content Management', color: 'orange' }
+      ];
+    } else {
+      return [
+        ...commonItems,
+        { id: 'learning-paths', icon: 'fas fa-route', label: 'My Learning Paths', color: 'emerald' },
+        { id: 'progress', icon: 'fas fa-chart-line', label: 'Progress Analytics', color: 'blue' },
+        { id: 'achievements', icon: 'fas fa-trophy', label: 'Achievements', color: 'yellow' }
+      ];
+    }
+  };
+
+  const getResourceItems = () => {
+    if (user?.role === 'instructor') {
+      return [
+        { id: 'materials', icon: 'fas fa-folder-open', label: 'Course Materials', color: 'red' },
+        { id: 'assignments', icon: 'fas fa-tasks', label: 'Assignments', color: 'purple' },
+        { id: 'grading', icon: 'fas fa-clipboard-check', label: 'Grading', color: 'green' },
+        { id: 'resources', icon: 'fas fa-link', label: 'Resources', color: 'blue' }
+      ];
+    } else {
+      return [
+        { id: 'pdf', icon: 'fas fa-file-pdf', label: 'PDF Documents', color: 'red' },
+        { id: 'videos', icon: 'fas fa-video', label: 'Video Lectures', color: 'purple' },
+        { id: 'links', icon: 'fas fa-link', label: 'External Links', color: 'blue' },
+        { id: 'notes', icon: 'fas fa-sticky-note', label: 'My Notes', color: 'orange' }
+      ];
+    }
+  };
+
+  const mainNavItems = getMainNavItems();
+  const resourceItems = getResourceItems();
 
   const getButtonClasses = (itemId, color) => {
     const baseClasses = "w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 text-left transform hover:scale-[1.02] group";
@@ -126,16 +157,18 @@ const Sidebar = () => {
       <div className="p-4 border-t border-gray-100 bg-gradient-to-r from-gray-50 to-white">
         <div className="flex items-center p-3 rounded-xl hover:bg-white/80 transition-all duration-200 cursor-pointer group">
           <div className="relative">
-            <img 
-              className="h-10 w-10 rounded-full border-2 border-white shadow-md group-hover:scale-105 transition-transform duration-200" 
-              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" 
-              alt="User Avatar"
-            />
+            <div className="h-10 w-10 rounded-full border-2 border-white shadow-md group-hover:scale-105 transition-transform duration-200 bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center text-white font-semibold">
+              {user?.firstName?.charAt(0) || 'U'}
+            </div>
             <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 border-2 border-white rounded-full animate-pulse"></div>
           </div>
           <div className="ml-3 flex-1">
-            <p className="text-sm font-semibold text-gray-800">Alakh Panday</p>
-            <p className="text-xs text-gray-500">Senior Instructor</p>
+            <p className="text-sm font-semibold text-gray-800">
+              {user ? `${user.firstName} ${user.lastName}` : 'User'}
+            </p>
+            <p className="text-xs text-gray-500 capitalize">
+              {user?.role || 'User'}
+            </p>
           </div>
           <i className="fas fa-chevron-right text-gray-400 text-xs group-hover:text-gray-600 transition-colors duration-200"></i>
         </div>

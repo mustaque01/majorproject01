@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const Header = ({ searchQuery, setSearchQuery, isDarkMode, setIsDarkMode }) => {
+const Header = ({ searchQuery, setSearchQuery, isDarkMode, setIsDarkMode, user, onLogout }) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
 
@@ -135,11 +135,11 @@ const Header = ({ searchQuery, setSearchQuery, isDarkMode, setIsDarkMode }) => {
                 <div className="p-4 border-b border-gray-100">
                   <div className="flex items-center space-x-3">
                     <div className="w-12 h-12 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full flex items-center justify-center font-bold text-white text-lg">
-                      M
+                      {user?.firstName?.charAt(0) || 'U'}
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-800">Mustaque Ali</h3>
-                      <p className="text-sm text-gray-600">mustaque@example.com</p>
+                      <h3 className="font-semibold text-gray-800">{user?.firstName} {user?.lastName}</h3>
+                      <p className="text-sm text-gray-600">{user?.email}</p>
                     </div>
                   </div>
                 </div>
@@ -164,10 +164,13 @@ const Header = ({ searchQuery, setSearchQuery, isDarkMode, setIsDarkMode }) => {
                     Progress Report
                   </a>
                   <div className="border-t border-gray-100 mt-2 pt-2">
-                    <a href="#" className="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                    <button 
+                      onClick={onLogout}
+                      className="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors w-full text-left"
+                    >
                       <i className="fas fa-sign-out-alt mr-3"></i>
                       Sign Out
-                    </a>
+                    </button>
                   </div>
                 </div>
               </div>
