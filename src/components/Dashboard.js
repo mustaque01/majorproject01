@@ -6,6 +6,7 @@ import ProgressChart from './ProgressChart';
 import CurrentFocus from './CurrentFocus';
 import RecentResources from './RecentResources';
 import CreateNewPath from './CreateNewPath';
+import CategoriesList from './CategoriesList';
 
 const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -19,6 +20,11 @@ const Dashboard = () => {
         
         <main className="p-6">
           <StatsOverview />
+          
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Learning Categories</h2>
+            <CategoriesList />
+          </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <ProgressChart />
