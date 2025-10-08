@@ -27,11 +27,18 @@ app.use((req, res, next) => {
     next();
 });
 
-mongoose.connect('mongodb://localhost:27017/learning-path-dashboard')
+// MongoDB connection with proper configuration
+mongoose.connect('mongodb://localhost:27017/learning-path-dashboard', {
+    serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+    maxPoolSize: 10, // Maintain up to 10 socket connections
+    minPoolSize: 5, // Maintain minimum 5 socket connections
+    maxIdleTimeMS: 30000, // Close connections after 30 seconds of inactivity
+})
 .then(() => {
     console.log('📦 Connected to MongoDB');
 }).catch(err => {
     console.error('❌ MongoDB connection error:', err);
+    process.exit(1); // Exit if can't connect to database
 });
 
 // Routes
@@ -101,10 +108,34 @@ app.use((req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log(`🚀 Server is running on port ${PORT}`);
     console.log(`📚 Learning Path Dashboard API v2.0`);
     console.log(`🔗 http://localhost:${PORT}`);
     console.log(`🔐 Authentication enabled`);
     console.log(`👥 Multi-role support: Students & Instructors`);
 });
+
+// Graceful shutdown
+process.on('SIGTERM', gracefulShutdown);
+process.on('SIGINT', gracefulShutdown);
+
+function gracefulShutdown(signal) {
+    console.log(`\n🔄 Received ${signal}. Starting graceful shutdown...`);
+    
+    server.close(() => {
+        console.log('🚪 HTTP server closed');
+        
+        mongoose.connection.close(false, () => {
+            console.log('📦 MongoDB connection closed');
+            console.log('✅ Graceful shutdown completed');
+            process.exit(0);
+        });
+    });
+    
+    // Force close server after 10secs
+    setTimeout(() => {
+        console.error('❌ Could not close connections in time, forcefully shutting down');
+        process.exit(1);
+    }, 10000);
+}
