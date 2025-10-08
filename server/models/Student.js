@@ -168,9 +168,7 @@ const studentSchema = new mongoose.Schema({
   toObject: { virtuals: true }
 });
 
-// Indexes for performance
-studentSchema.index({ email: 1 });
-studentSchema.index({ studentId: 1 });
+// Indexes for performance (email and studentId already indexed due to unique: true)
 studentSchema.index({ 'enrolledCourses.courseId': 1 });
 studentSchema.index({ createdAt: -1 });
 

@@ -264,9 +264,7 @@ const instructorSchema = new mongoose.Schema({
   toObject: { virtuals: true }
 });
 
-// Indexes for performance
-instructorSchema.index({ email: 1 });
-instructorSchema.index({ instructorId: 1 });
+// Indexes for performance (email and instructorId already indexed due to unique: true)
 instructorSchema.index({ specialization: 1 });
 instructorSchema.index({ 'teachingStats.averageRating': -1 });
 instructorSchema.index({ createdAt: -1 });

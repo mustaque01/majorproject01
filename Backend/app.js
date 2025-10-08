@@ -4,6 +4,9 @@ const categoriesRoutes = require('./Routes/categoriesDB');
 const authRoutes = require('../server/routes/auth');
 const { protect } = require('../server/middleware/auth');
 
+// Disable Mongoose buffering globally
+mongoose.set('bufferCommands', false);
+
 const app = express();
 app.use(express.json());
 
@@ -27,13 +30,8 @@ app.use((req, res, next) => {
     next();
 });
 
-// MongoDB connection with proper configuration
-mongoose.connect('mongodb://localhost:27017/learning-path-dashboard', {
-    serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
-    maxPoolSize: 10, // Maintain up to 10 socket connections
-    minPoolSize: 5, // Maintain minimum 5 socket connections
-    maxIdleTimeMS: 30000, // Close connections after 30 seconds of inactivity
-})
+// MongoDB connection with correct options for Mongoose 8.x
+mongoose.connect('mongodb://localhost:27017/learning-path-fresh')
 .then(() => {
     console.log('📦 Connected to MongoDB');
 }).catch(err => {
@@ -126,10 +124,13 @@ function gracefulShutdown(signal) {
     server.close(() => {
         console.log('🚪 HTTP server closed');
         
-        mongoose.connection.close(false, () => {
+        mongoose.connection.close().then(() => {
             console.log('📦 MongoDB connection closed');
             console.log('✅ Graceful shutdown completed');
             process.exit(0);
+        }).catch((err) => {
+            console.error('Error closing MongoDB connection:', err);
+            process.exit(1);
         });
     });
     
