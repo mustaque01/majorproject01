@@ -43,12 +43,17 @@ const createSendToken = (user, statusCode, res) => {
 // @access  Public
 const register = async (req, res) => {
   try {
+    console.log('🔍 Registration attempt:', req.body);
     const { role, ...userData } = req.body;
+    
+    console.log('🔍 Role:', role);
+    console.log('🔍 User data:', userData);
     
     // Validate required fields
     const requiredFields = ['firstName', 'lastName', 'email', 'password'];
     for (const field of requiredFields) {
       if (!userData[field]) {
+        console.log(`❌ Missing required field: ${field}`);
         return res.status(400).json({
           success: false,
           message: `${field} is required`
@@ -70,29 +75,34 @@ const register = async (req, res) => {
     let user;
     
     if (role === 'student') {
-      // Validate student-specific fields
-      if (!userData.institution) {
-        return res.status(400).json({
-          success: false,
-          message: 'Institution is required for students'
-        });
-      }
+      console.log('🔍 Creating student account...');
+      // Make institution optional for now
+      // if (!userData.institution) {
+      //   return res.status(400).json({
+      //     success: false,
+      //     message: 'Institution is required for students'
+      //   });
+      // }
       
       user = await Student.create(userData);
+      console.log('✅ Student created successfully');
     } else if (role === 'instructor') {
-      // Validate instructor-specific fields
-      const instructorRequiredFields = ['department', 'experience', 'specialization'];
-      for (const field of instructorRequiredFields) {
-        if (!userData[field]) {
-          return res.status(400).json({
-            success: false,
-            message: `${field} is required for instructors`
-          });
-        }
-      }
+      console.log('🔍 Creating instructor account...');
+      // Make instructor fields optional for now
+      // const instructorRequiredFields = ['department', 'experience', 'specialization'];
+      // for (const field of instructorRequiredFields) {
+      //   if (!userData[field]) {
+      //     return res.status(400).json({
+      //       success: false,
+      //       message: `${field} is required for instructors`
+      //     });
+      //   }
+      // }
       
       user = await Instructor.create(userData);
+      console.log('✅ Instructor created successfully');
     } else {
+      console.log('❌ Invalid role:', role);
       return res.status(400).json({
         success: false,
         message: 'Invalid role. Must be either "student" or "instructor"'
@@ -102,11 +112,15 @@ const register = async (req, res) => {
     createSendToken(user, 201, res);
     
   } catch (error) {
-    console.error('Registration error:', error);
+    console.error('❌ Registration error:', error);
+    console.error('❌ Error name:', error.name);
+    console.error('❌ Error message:', error.message);
+    console.error('❌ Error stack:', error.stack);
     
     // Handle MongoDB duplicate key error
     if (error.code === 11000) {
       const field = Object.keys(error.keyValue)[0];
+      console.log('❌ Duplicate key error for field:', field);
       return res.status(400).json({
         success: false,
         message: `${field} already exists`
@@ -116,6 +130,7 @@ const register = async (req, res) => {
     // Handle validation errors
     if (error.name === 'ValidationError') {
       const errors = Object.values(error.errors).map(err => err.message);
+      console.log('❌ Validation errors:', errors);
       return res.status(400).json({
         success: false,
         message: 'Validation Error',
@@ -408,6 +423,12 @@ const deleteMe = async (req, res) => {
     });
   }
 };
+
+// Test route to verify auth routes are working
+router.get('/test', (req, res) => {
+  console.log('🔍 Test route accessed');
+  res.json({ success: true, message: 'Auth routes are working!' });
+});
 
 // Routes
 router.post('/register', register);
