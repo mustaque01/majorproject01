@@ -235,16 +235,21 @@ majorproject01/
 For testing purposes, you can create accounts with these sample credentials:
 
 ### Student Account
-- **Email**: `student@demo.com`
+- **Email**: `student@demo.com`  
 - **Password**: `123456`
 - **Role**: Student
 
-### Instructor Account
+### Instructor Account  
 - **Email**: `instructor@demo.com`
 - **Password**: `123456`
 - **Role**: Instructor
 
-> **Note**: Create these accounts through the registration process
+### Test Account (Working)
+- **Email**: `test@test.com`
+- **Password**: `123456` 
+- **Role**: Student
+
+> **Note**: Database schema issues resolved. Use simplified authentication flow.
 
 ## 🐛 Troubleshooting
 
