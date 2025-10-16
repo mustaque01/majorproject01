@@ -30,8 +30,8 @@ app.use((req, res, next) => {
     next();
 });
 
-// MongoDB connection with correct options for Mongoose 8.x
-mongoose.connect('mongodb://localhost:27017/learning-path-fresh')
+// MongoDB connection for courses and categories  
+mongoose.connect('mongodb://localhost:27017/learnpath-courses')
 .then(() => {
     console.log('📦 Connected to MongoDB');
 }).catch(err => {
