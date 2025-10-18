@@ -18,7 +18,7 @@ const resourceSchema = Joi.object({
     url: Joi.string().uri().when('type', {
         is: 'Link',
         then: Joi.required(),
-        otherwise: Joi.optional()
+        otherwise: Joi.optional
     }),
     progress: Joi.number().min(0).max(100).required()
 });
