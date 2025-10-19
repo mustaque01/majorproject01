@@ -6,7 +6,7 @@ import './App.css';
 
 // Main App component that handles authentication flow
 const AppContent = () => {
-  const { isAuthenticated, isLoading, user } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
 
   // Show loading spinner while checking authentication
   if (isLoading) {

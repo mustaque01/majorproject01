@@ -151,18 +151,18 @@ const Header = ({ searchQuery, setSearchQuery, isDarkMode, setIsDarkMode, user, 
                     <i className={`fas ${isDarkMode ? 'fa-sun' : 'fa-moon'} mr-3 text-gray-400`}></i>
                     {isDarkMode ? 'Light Mode' : 'Dark Mode'}
                   </button>
-                  <a href="#" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                  <button className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors w-full text-left">
                     <i className="fas fa-user mr-3 text-gray-400"></i>
                     My Profile
-                  </a>
-                  <a href="#" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                  </button>
+                  <button className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors w-full text-left">
                     <i className="fas fa-cog mr-3 text-gray-400"></i>
                     Settings
-                  </a>
-                  <a href="#" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                  </button>
+                  <button className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors w-full text-left">
                     <i className="fas fa-chart-line mr-3 text-gray-400"></i>
                     Progress Report
-                  </a>
+                  </button>
                   <div className="border-t border-gray-100 mt-2 pt-2">
                     <button 
                       onClick={onLogout}
