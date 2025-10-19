@@ -733,4 +733,7 @@ app.listen(PORT, () => {
     console.log(`📦 Database: learnpath-users`);
 });
 
+// expose authorizePermission for external use and avoid "assigned but never used"
+app.authorizePermission = authorizePermission;
+
 module.exports = app;
