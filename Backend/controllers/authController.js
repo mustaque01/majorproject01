@@ -90,10 +90,8 @@ const registerUser = async (req, res) => {
             });
         }
 
-        // 4. HASH PASSWORD SECURELY
-        console.log('🔐 Hashing password...');
-        const saltRounds = 12;
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
+        // 4. PASSWORD WILL BE HASHED BY MODEL PRE-SAVE HOOK
+        console.log('🔐 Password will be hashed by model...');
 
         // 5. SET ROLE-BASED PERMISSIONS
         let permissions = [];
@@ -117,7 +115,7 @@ const registerUser = async (req, res) => {
             firstName: firstName.trim(),
             lastName: lastName.trim(),
             email: email.toLowerCase().trim(),
-            password: hashedPassword,
+            password: password,
             role,
             permissions,
             isActive: true,

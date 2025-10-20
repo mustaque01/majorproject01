@@ -1,8 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const categoriesRoutes = require('./Routes/categoriesDB');
-const authRoutes = require('../server/routes/auth');
-const { protect } = require('../server/middleware/auth');
+const authRoutes = require('./Routes/authReal');  // Use the real auth routes
+const { authenticateUser } = require('./middleware/authReal');  // Use real auth middleware
 
 // Disable Mongoose buffering globally
 mongoose.set('bufferCommands', false);
@@ -30,10 +30,11 @@ app.use((req, res, next) => {
     next();
 });
 
-// MongoDB connection for courses and categories  
-mongoose.connect('mongodb://localhost:27017/learnpath-courses')
+// MongoDB connection for production database with real users  
+mongoose.connect('mongodb://localhost:27017/learnpath-production')
 .then(() => {
-    console.log('📦 Connected to MongoDB');
+    console.log('📦 Connected to MongoDB - Production Database');
+    console.log('🔐 Real authentication system enabled');
 }).catch(err => {
     console.error('❌ MongoDB connection error:', err);
     process.exit(1); // Exit if can't connect to database
@@ -46,7 +47,7 @@ console.log('✅ Auth routes loaded successfully');
 app.use('/api/categories', categoriesRoutes);
 
 // Protected route example
-app.get('/api/dashboard', protect, (req, res) => {
+app.get('/api/dashboard', authenticateUser, (req, res) => {
     res.json({
         success: true,
         message: `Welcome to your dashboard, ${req.user.firstName}!`,
