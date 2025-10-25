@@ -12,58 +12,43 @@ const PDFDocuments = ({ user }) => {
   const [filterCategory, setFilterCategory] = useState('all');
   const [sortBy, setSortBy] = useState('createdAt');
   useEffect(() => {
-    // Mock data for demonstration
-    const mockDocuments = [
-      {
-        id: 1,
-        title: 'JavaScript Fundamentals Guide',
-        description: 'Complete guide to JavaScript basics and advanced concepts',
-        fileName: 'javascript-guide.pdf',
-        fileSize: 2048000,
-        category: 'programming',
-        tags: ['javascript', 'programming', 'fundamentals'],
-        isCompleted: true,
-        isFavorite: true,
-        lastAccessedAt: '2025-10-20T10:30:00Z',
-        createdAt: '2025-10-15T09:00:00Z',
-        accessCount: 15
-      },
-      {
-        id: 2,
-        title: 'React Best Practices',
-        description: 'Modern React development patterns and best practices',
-        fileName: 'react-best-practices.pdf',
-        fileSize: 1536000,
-        category: 'programming',
-        tags: ['react', 'frontend', 'best-practices'],
-        isCompleted: false,
-        isFavorite: false,
-        lastAccessedAt: '2025-10-18T14:20:00Z',
-        createdAt: '2025-10-10T11:15:00Z',
-        accessCount: 8
-      },
-      {
-        id: 3,
-        title: 'Database Design Principles',
-        description: 'Comprehensive guide to relational database design',
-        fileName: 'database-design.pdf',
-        fileSize: 3072000,
-        category: 'general',
-        tags: ['database', 'sql', 'design'],
-        isCompleted: false,
-        isFavorite: true,
-        lastAccessedAt: '2025-10-19T16:45:00Z',
-        createdAt: '2025-10-12T13:30:00Z',
-        accessCount: 12
-      }
-    ];
-
-    // Simulate API call
-    setTimeout(() => {
-      setDocuments(mockDocuments);
-      setLoading(false);
-    }, 1000);
+    fetchPDFDocuments();
   }, []);
+
+  const fetchPDFDocuments = async () => {
+    try {
+      setLoading(true);
+      
+      // Get auth token from localStorage
+      const token = localStorage.getItem('accessToken');
+      
+      const response = await fetch('http://localhost:5000/api/resources/pdf', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      if (data.success) {
+        setDocuments(data.data || []);
+      } else {
+        throw new Error(data.message || 'Failed to fetch PDF documents');
+      }
+    } catch (error) {
+      console.error('Error fetching PDF documents:', error);
+      // For now, show empty array if API fails
+      setDocuments([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const formatFileSize = (bytes) => {
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
@@ -114,42 +99,96 @@ const PDFDocuments = ({ user }) => {
     }
   };
 
-  const handleUploadSubmit = (e) => {
+  const handleUploadSubmit = async (e) => {
     e.preventDefault();
     if (!selectedFile || !uploadTitle.trim()) return;
 
-    const newDocument = {
-      id: Date.now(),
-      title: uploadTitle,
-      description: uploadDescription,
-      fileName: selectedFile.name,
-      fileSize: selectedFile.size,
-      category: 'general',
-      tags: [],
-      isCompleted: false,
-      isFavorite: false,
-      lastAccessedAt: new Date().toISOString(),
-      createdAt: new Date().toISOString(),
-      accessCount: 0
-    };
+    try {
+      const token = localStorage.getItem('accessToken');
+      const formData = new FormData();
+      
+      formData.append('file', selectedFile);
+      formData.append('title', uploadTitle);
+      formData.append('description', uploadDescription);
+      formData.append('category', 'general');
 
-    setDocuments([newDocument, ...documents]);
-    setShowUploadModal(false);
-    setSelectedFile(null);
-    setUploadTitle('');
-    setUploadDescription('');
+      const response = await fetch('http://localhost:5000/api/resources/pdf', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      if (data.success) {
+        // Refresh the documents list
+        await fetchPDFDocuments();
+        
+        setShowUploadModal(false);
+        setSelectedFile(null);
+        setUploadTitle('');
+        setUploadDescription('');
+        
+        alert('PDF document uploaded successfully!');
+      } else {
+        throw new Error(data.message || 'Failed to upload PDF');
+      }
+    } catch (error) {
+      console.error('Error uploading PDF:', error);
+      alert('Failed to upload PDF: ' + error.message);
+    }
   };
 
-  const toggleFavorite = (id) => {
-    setDocuments(docs => docs.map(doc => 
-      doc.id === id ? { ...doc, isFavorite: !doc.isFavorite } : doc
-    ));
+  const toggleFavorite = async (id) => {
+    try {
+      const token = localStorage.getItem('accessToken');
+      
+      const response = await fetch(`http://localhost:5000/api/resources/pdf/${id}/favorite`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        // Update local state
+        setDocuments(docs => docs.map(doc => 
+          doc._id === id ? { ...doc, isFavorite: !doc.isFavorite } : doc
+        ));
+      }
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+    }
   };
 
-  const markAsCompleted = (id) => {
-    setDocuments(docs => docs.map(doc => 
-      doc.id === id ? { ...doc, isCompleted: !doc.isCompleted } : doc
-    ));
+  const markAsCompleted = async (id) => {
+    try {
+      const token = localStorage.getItem('accessToken');
+      
+      const response = await fetch(`http://localhost:5000/api/resources/pdf/${id}/complete`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        // Update local state
+        setDocuments(docs => docs.map(doc => 
+          doc._id === id ? { ...doc, isCompleted: !doc.isCompleted } : doc
+        ));
+      }
+    } catch (error) {
+      console.error('Error marking as completed:', error);
+    }
   };
 
   if (loading) {
@@ -288,7 +327,7 @@ const PDFDocuments = ({ user }) => {
       {/* Documents Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {sortedDocuments.map((doc) => (
-          <div key={doc.id} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-200 overflow-hidden">
+          <div key={doc._id || doc.id} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-200 overflow-hidden">
             <div className="p-6">
               {/* Header */}
               <div className="flex items-start justify-between mb-4">
@@ -305,7 +344,7 @@ const PDFDocuments = ({ user }) => {
                 </div>
                 <div className="flex items-center space-x-2">
                   <button
-                    onClick={() => toggleFavorite(doc.id)}
+                    onClick={() => toggleFavorite(doc._id || doc.id)}
                     className={`p-1 rounded-full transition-colors ${
                       doc.isFavorite ? 'text-yellow-500' : 'text-gray-400 hover:text-yellow-500'
                     }`}
@@ -313,7 +352,7 @@ const PDFDocuments = ({ user }) => {
                     <i className={`fas fa-heart text-sm`}></i>
                   </button>
                   <button
-                    onClick={() => markAsCompleted(doc.id)}
+                    onClick={() => markAsCompleted(doc._id || doc.id)}
                     className={`p-1 rounded-full transition-colors ${
                       doc.isCompleted ? 'text-green-500' : 'text-gray-400 hover:text-green-500'
                     }`}
