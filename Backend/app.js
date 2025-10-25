@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const categoriesRoutes = require('./Routes/categoriesDB');
 const authRoutes = require('./Routes/authReal');  // Use the real auth routes
+const resourceRoutes = require('./Routes/resources');  // Resources routes
 const { authenticateUser } = require('./middleware/authReal');  // Use real auth middleware
 
 // Disable Mongoose buffering globally
@@ -45,6 +46,9 @@ console.log('🔍 Loading auth routes...');
 app.use('/api/auth', authRoutes);
 console.log('✅ Auth routes loaded successfully');
 app.use('/api/categories', categoriesRoutes);
+console.log('🔍 Loading resource routes...');
+app.use('/api/resources', resourceRoutes);
+console.log('✅ Resource routes loaded successfully');
 
 // Protected route example
 app.get('/api/dashboard', authenticateUser, (req, res) => {

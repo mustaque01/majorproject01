@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-const Sidebar = ({ user }) => {
-  const [activeItem, setActiveItem] = useState('dashboard');
+const Sidebar = ({ user, activeView, setActiveView }) => {
+  // Use activeView from props if provided, otherwise default to 'dashboard'
+  const activeItem = activeView || 'dashboard';
+  const setActiveItem = setActiveView || (() => {});
 
   // Define role-specific navigation items
   const getMainNavItems = () => {
