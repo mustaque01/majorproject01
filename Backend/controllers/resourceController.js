@@ -446,18 +446,46 @@ const markAsCompleted = async (req, res) => {
             });
         }
 
+        const wasCompleted = resource.isCompleted;
         await resource.markAsCompleted();
+
+        // Award coins for completion if this is the first time completing
+        let rewardInfo = null;
+        if (!wasCompleted && resource.isCompleted && req.user.role === 'student') {
+            const { awardProgressCoins } = require('../services/rewardService');
+            
+            // Award completion coins (treating as 100% progress)
+            rewardInfo = await awardProgressCoins(
+                req.user._id,
+                resource._id,
+                0, // old progress
+                100, // new progress (completion)
+                resource.title
+            );
+        }
 
         console.log('✅ Resource marked as completed');
 
-        res.json({
+        const response = {
             success: true,
             message: 'Resource marked as completed',
             data: { 
                 isCompleted: resource.isCompleted,
                 completedAt: resource.completedAt
             }
-        });
+        };
+
+        // Include reward information if coins were awarded
+        if (rewardInfo && rewardInfo.coinsAwarded > 0) {
+            response.reward = {
+                coinsAwarded: rewardInfo.coinsAwarded,
+                newBalance: rewardInfo.newBalance,
+                milestones: rewardInfo.milestones
+            };
+            response.message += ` You earned ${rewardInfo.coinsAwarded} coins!`;
+        }
+
+        res.json(response);
 
     } catch (error) {
         console.error('💥 Mark completed error:', error);

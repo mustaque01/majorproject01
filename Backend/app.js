@@ -55,6 +55,12 @@ const achievementRoutes = require('./routes/achievements');
 app.use('/api/achievements', achievementRoutes);
 console.log('✅ Achievement routes loaded successfully');
 
+// Reward routes
+console.log('🔍 Loading reward routes...');
+const rewardRoutes = require('./Routes/rewards');
+app.use('/api/rewards', rewardRoutes);
+console.log('✅ Reward routes loaded successfully');
+
 // Protected route example
 app.get('/api/dashboard', authenticateUser, (req, res) => {
     res.json({
@@ -99,6 +105,13 @@ app.get('/', (req, res) => {
             'PUT /api/achievements/:id - Update achievement (admin/instructor)',
             'DELETE /api/achievements/:id - Delete achievement (admin only)',
             'GET /api/achievements/leaderboard - Get achievement leaderboard',
+            // Reward endpoints
+            'GET /api/rewards/coins/stats - Get user coin statistics (requires auth)',
+            'POST /api/rewards/daily-bonus - Claim daily login bonus (students only)',
+            'POST /api/rewards/course-progress - Award coins for course progress (students only)',
+            'GET /api/rewards/notifications - Get user notifications (requires auth)',
+            'PUT /api/rewards/notifications/:id/read - Mark notification as read (requires auth)',
+            'GET /api/rewards/leaderboard - Get coin leaderboard (requires auth)',
             // Dashboard
             'GET /api/dashboard - Get personalized dashboard (requires auth)'
         ]

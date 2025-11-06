@@ -19,6 +19,7 @@ import MyNotes from './resources/MyNotes';
 import Achievements from './Achievements';
 import MyLearningPaths from './MyLearningPaths';
 import ProgressAnalytics from './ProgressAnalytics';
+import CoinRewards from './CoinRewards';
 
 const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -49,6 +50,8 @@ const Dashboard = () => {
         return <MyLearningPaths />;
       case 'progress':
         return <ProgressAnalytics />;
+      case 'rewards':
+        return <CoinRewards />;
       case 'dashboard':
       default:
         return renderDashboardContent();
@@ -95,6 +98,26 @@ const Dashboard = () => {
         </div>
         <StatsOverview user={user} />
       </section>
+      
+      {/* Rewards Section - Students Only */}
+      {user?.role === 'student' && (
+        <section className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-800">Rewards & Progress</h2>
+              <p className="text-gray-600 mt-1">Track your coin earnings and recent achievements</p>
+            </div>
+            <button 
+              onClick={() => setActiveView('rewards')}
+              className="text-indigo-600 hover:text-indigo-700 font-medium text-sm flex items-center"
+            >
+              View All Rewards
+              <i className="fas fa-external-link-alt ml-2"></i>
+            </button>
+          </div>
+          <CoinRewards />
+        </section>
+      )}
       
       {/* Learning Categories */}
       <section className="space-y-6">

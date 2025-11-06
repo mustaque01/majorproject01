@@ -139,6 +139,65 @@ const UserSchema = new mongoose.Schema({
         }
     }],
 
+    // Reward System
+    coins: {
+        type: Number,
+        default: 0,
+        min: 0
+    },
+    totalCoinsEarned: {
+        type: Number,
+        default: 0,
+        min: 0
+    },
+    coinTransactions: [{
+        type: {
+            type: String,
+            enum: ['earned', 'spent', 'bonus'],
+            required: true
+        },
+        amount: {
+            type: Number,
+            required: true
+        },
+        source: {
+            type: String,
+            required: true,
+            enum: ['course_completion', 'course_progress', 'daily_login', 'achievement', 'bonus', 'purchase']
+        },
+        description: String,
+        relatedId: mongoose.Schema.Types.ObjectId, // Course/Achievement ID
+        timestamp: {
+            type: Date,
+            default: Date.now
+        }
+    }],
+
+    // Notifications System
+    notifications: [{
+        type: {
+            type: String,
+            enum: ['reward', 'achievement', 'course', 'system'],
+            required: true
+        },
+        title: String,
+        message: String,
+        isRead: {
+            type: Boolean,
+            default: false
+        },
+        coins: Number, // Coins earned in this notification
+        metadata: {
+            courseId: mongoose.Schema.Types.ObjectId,
+            achievementId: mongoose.Schema.Types.ObjectId,
+            progressPercentage: Number
+        },
+        timestamp: {
+            type: Date,
+            default: Date.now
+        }
+    }],
+
     // Additional Metadata
     lastActiveAt: {
         type: Date,
@@ -304,6 +363,77 @@ UserSchema.methods.hasAnyPermission = function(permissions) {
     }
 
     return permissions.some(permission => this.permissions.includes(permission));
+};
+
+// Instance method to award coins
+UserSchema.methods.awardCoins = function(amount, source, description = '', relatedId = null) {
+    this.coins += amount;
+    this.totalCoinsEarned += amount;
+    
+    this.coinTransactions.push({
+        type: 'earned',
+        amount,
+        source,
+        description,
+        relatedId,
+        timestamp: new Date()
+    });
+
+    return this.save();
+};
+
+// Instance method to spend coins
+UserSchema.methods.spendCoins = function(amount, source, description = '', relatedId = null) {
+    if (this.coins < amount) {
+        throw new Error('Insufficient coins');
+    }
+
+    this.coins -= amount;
+    
+    this.coinTransactions.push({
+        type: 'spent',
+        amount,
+        source,
+        description,
+        relatedId,
+        timestamp: new Date()
+    });
+
+    return this.save();
+};
+
+// Instance method to add notification
+UserSchema.methods.addNotification = function(type, title, message, coins = 0, metadata = {}) {
+    this.notifications.unshift({
+        type,
+        title,
+        message,
+        coins,
+        metadata,
+        timestamp: new Date()
+    });
+
+    // Keep only the latest 50 notifications
+    if (this.notifications.length > 50) {
+        this.notifications = this.notifications.slice(0, 50);
+    }
+
+    return this.save();
+};
+
+// Instance method to mark notification as read
+UserSchema.methods.markNotificationAsRead = function(notificationId) {
+    const notification = this.notifications.id(notificationId);
+    if (notification) {
+        notification.isRead = true;
+        return this.save();
+    }
+    return Promise.resolve();
+};
+
+// Instance method to get unread notification count
+UserSchema.methods.getUnreadNotificationCount = function() {
+    return this.notifications.filter(n => !n.isRead).length;
 };
 
 // Instance method to generate email verification token

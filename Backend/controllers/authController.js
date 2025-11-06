@@ -375,8 +375,19 @@ const loginUser = async (req, res) => {
 
         console.log('🎉 Login successful for user:', user.email);
 
-        // 9. SEND SUCCESS RESPONSE
-        res.json({
+        // 8.5. AWARD DAILY LOGIN BONUS (for students only)
+        let dailyBonusInfo = null;
+        if (user.role === 'student') {
+            try {
+                const { awardDailyLoginBonus } = require('../services/rewardService');
+                dailyBonusInfo = await awardDailyLoginBonus(user._id);
+            } catch (rewardError) {
+                console.log('⚠️ Daily bonus error (non-critical):', rewardError.message);
+            }
+        }
+
+        // 9. PREPARE RESPONSE
+        const response = {
             success: true,
             message: 'Login successful',
             data: {
@@ -384,7 +395,19 @@ const loginUser = async (req, res) => {
                 accessToken,
                 refreshToken
             }
-        });
+        };
+
+        // Include daily bonus info if awarded
+        if (dailyBonusInfo && dailyBonusInfo.success && !dailyBonusInfo.alreadyAwarded) {
+            response.dailyBonus = {
+                coinsAwarded: dailyBonusInfo.coinsAwarded,
+                newBalance: dailyBonusInfo.newBalance
+            };
+            response.message += ` Welcome back! You earned ${dailyBonusInfo.coinsAwarded} coins.`;
+        }
+
+        // 10. SEND SUCCESS RESPONSE
+        res.json(response);
 
     } catch (error) {
         console.error('💥 Login error:', error);

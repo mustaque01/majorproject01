@@ -24,7 +24,8 @@ const Sidebar = ({ user, activeView, setActiveView }) => {
         ...commonItems,
         { id: 'learning-paths', icon: 'fas fa-route', label: 'My Learning Paths', color: 'emerald' },
         { id: 'progress', icon: 'fas fa-chart-line', label: 'Progress Analytics', color: 'blue' },
-        { id: 'achievements', icon: 'fas fa-trophy', label: 'Achievements', color: 'yellow' }
+        { id: 'achievements', icon: 'fas fa-trophy', label: 'Achievements', color: 'yellow' },
+        { id: 'rewards', icon: 'fas fa-coins', label: 'Coins & Rewards', color: 'orange' }
       ];
     }
   };
