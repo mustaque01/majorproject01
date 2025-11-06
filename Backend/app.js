@@ -50,6 +50,11 @@ console.log('🔍 Loading resource routes...');
 app.use('/api/resources', resourceRoutes);
 console.log('✅ Resource routes loaded successfully');
 
+// Achievement routes
+const achievementRoutes = require('./routes/achievements');
+app.use('/api/achievements', achievementRoutes);
+console.log('✅ Achievement routes loaded successfully');
+
 // Protected route example
 app.get('/api/dashboard', authenticateUser, (req, res) => {
     res.json({
@@ -86,6 +91,14 @@ app.get('/', (req, res) => {
             'GET /api/categories/courses/all - Get all courses',
             'GET /api/categories/courses/:id - Get course by ID',
             'GET /api/categories/stats/dashboard - Get dashboard statistics',
+            // Achievement endpoints
+            'GET /api/achievements - Get all achievements',
+            'GET /api/achievements/:id - Get achievement by ID',
+            'GET /api/achievements/user/me - Get user achievements (requires auth)',
+            'POST /api/achievements - Create achievement (admin/instructor)',
+            'PUT /api/achievements/:id - Update achievement (admin/instructor)',
+            'DELETE /api/achievements/:id - Delete achievement (admin only)',
+            'GET /api/achievements/leaderboard - Get achievement leaderboard',
             // Dashboard
             'GET /api/dashboard - Get personalized dashboard (requires auth)'
         ]

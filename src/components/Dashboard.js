@@ -9,11 +9,16 @@ import RecentResources from './RecentResources';
 import CreateNewPath from './CreateNewPath';
 import CategoriesList from './CategoriesList';
 
-// Resource components (will create these)
+// Resource components
 import PDFDocuments from './resources/PDFDocuments';
 import VideoLectures from './resources/VideoLectures';
 import ExternalLinks from './resources/ExternalLinks';
 import MyNotes from './resources/MyNotes';
+
+// New main menu components
+import Achievements from './Achievements';
+import MyLearningPaths from './MyLearningPaths';
+import ProgressAnalytics from './ProgressAnalytics';
 
 const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -28,6 +33,7 @@ const Dashboard = () => {
   // Render the appropriate view based on activeView
   const renderActiveView = () => {
     switch(activeView) {
+      // Resource components
       case 'pdf':
         return <PDFDocuments user={user} />;
       case 'videos':
@@ -36,6 +42,13 @@ const Dashboard = () => {
         return <ExternalLinks user={user} />;
       case 'notes':
         return <MyNotes user={user} />;
+      // New main menu components
+      case 'achievements':
+        return <Achievements />;
+      case 'learning-paths':
+        return <MyLearningPaths />;
+      case 'progress':
+        return <ProgressAnalytics />;
       case 'dashboard':
       default:
         return renderDashboardContent();
