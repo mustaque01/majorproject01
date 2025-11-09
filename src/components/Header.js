@@ -120,11 +120,11 @@ const Header = ({ searchQuery, setSearchQuery, isDarkMode, setIsDarkMode, user, 
               className="flex items-center space-x-3 p-2 rounded-lg bg-white bg-opacity-20 hover:bg-opacity-30 transition-all duration-300 backdrop-blur-sm"
             >
               <div className="w-8 h-8 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full flex items-center justify-center font-bold text-sm">
-                M
+                {user?.firstName?.charAt(0) || 'U'}
               </div>
               <div className="hidden md:block text-left">
-                <p className="text-sm font-medium">Mustaque</p>
-                <p className="text-xs text-indigo-200">Premium</p>
+                <p className="text-sm font-medium">{user?.firstName || 'User'}</p>
+                <p className="text-xs text-indigo-200 capitalize">{user?.role || 'Member'}</p>
               </div>
               <i className="fas fa-chevron-down text-xs"></i>
             </button>
