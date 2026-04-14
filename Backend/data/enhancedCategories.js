@@ -1,0 +1,177 @@
+/**
+ * Enhanced Categories Data
+ * Production-ready categories with metadata
+ */
+
+const enhancedCategoriesData = [
+    {
+        id: 1,
+        name: 'Web Development',
+        description: 'Frontend, Backend, and Full-Stack web development courses',
+        icon: 'fas fa-globe',
+        color: '#3B82F6',
+        logo: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=100',
+        bannerImage: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800',
+        difficultyLevels: ['Beginner', 'Intermediate', 'Advanced'],
+        tags: ['html', 'css', 'javascript', 'react', 'angular', 'vue'],
+        isPopular: true,
+        trending: true,
+        displayOrder: 1
+    },
+    {
+        id: 2,
+        name: 'Mobile Development',
+        description: 'iOS, Android, React Native, and Flutter development',
+        icon: 'fas fa-mobile-alt',
+        color: '#10B981',
+        logo: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=100',
+        bannerImage: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800',
+        difficultyLevels: ['Beginner', 'Intermediate', 'Advanced'],
+        tags: ['react-native', 'ios', 'android', 'flutter', 'swift', 'kotlin'],
+        isPopular: true,
+        trending: true,
+        displayOrder: 2
+    },
+    {
+        id: 3,
+        name: 'Data Science & AI',
+        description: 'Machine Learning, Data Analysis, and Artificial Intelligence',
+        icon: 'fas fa-brain',
+        color: '#8B5CF6',
+        logo: 'https://images.unsplash.com/photo-1526379095098-d400fd0bf935?w=100',
+        bannerImage: 'https://images.unsplash.com/photo-1526379095098-d400fd0bf935?w=800',
+        difficultyLevels: ['Intermediate', 'Advanced'],
+        tags: ['python', 'machine-learning', 'deep-learning', 'tensorflow', 'data-analysis'],
+        isPopular: true,
+        trending: true,
+        displayOrder: 3
+    },
+    {
+        id: 4,
+        name: 'Programming Languages',
+        description: 'Python, JavaScript, Java, C++, and other programming languages',
+        icon: 'fas fa-code',
+        color: '#F59E0B',
+        logo: 'https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=100',
+        bannerImage: 'https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=800',
+        difficultyLevels: ['Beginner', 'Intermediate', 'Advanced'],
+        tags: ['python', 'javascript', 'java', 'cpp', 'programming-fundamentals'],
+        isPopular: true,
+        trending: false,
+        displayOrder: 4
+    },
+    {
+        id: 5,
+        name: 'DevOps & Cloud',
+        description: 'Docker, Kubernetes, AWS, Azure, and deployment strategies',
+        icon: 'fas fa-cloud',
+        color: '#EF4444',
+        logo: 'https://images.unsplash.com/photo-1605745341112-85968b19335b?w=100',
+        bannerImage: 'https://images.unsplash.com/photo-1605745341112-85968b19335b?w=800',
+        difficultyLevels: ['Intermediate', 'Advanced'],
+        tags: ['docker', 'kubernetes', 'aws', 'azure', 'ci-cd', 'devops'],
+        isPopular: true,
+        trending: true,
+        displayOrder: 5
+    },
+    {
+        id: 6,
+        name: 'Database & Backend',
+        description: 'SQL, NoSQL, APIs, and server-side development',
+        icon: 'fas fa-database',
+        color: '#06B6D4',
+        logo: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=100',
+        bannerImage: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800',
+        difficultyLevels: ['Beginner', 'Intermediate', 'Advanced'],
+        tags: ['sql', 'nosql', 'mongodb', 'postgresql', 'rest-api', 'graphql'],
+        isPopular: true,
+        trending: false,
+        displayOrder: 6
+    },
+    {
+        id: 7,
+        name: 'UI/UX Design',
+        description: 'User Interface and User Experience design principles',
+        icon: 'fas fa-paint-brush',
+        color: '#EC4899',
+        logo: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=100',
+        bannerImage: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800',
+        difficultyLevels: ['Beginner', 'Intermediate'],
+        tags: ['figma', 'design', 'ux', 'ui', 'wireframing', 'prototyping'],
+        isPopular: true,
+        trending: true,
+        displayOrder: 7
+    },
+    {
+        id: 8,
+        name: 'Cybersecurity',
+        description: 'Ethical hacking, network security, and data protection',
+        icon: 'fas fa-shield-alt',
+        color: '#DC2626',
+        logo: 'https://images.unsplash.com/photo-1555097462-c2dfc2c45ae2?w=100',
+        bannerImage: 'https://images.unsplash.com/photo-1555097462-c2dfc2c45ae2?w=800',
+        difficultyLevels: ['Intermediate', 'Advanced'],
+        tags: ['security', 'hacking', 'encryption', 'network-security', 'penetration-testing'],
+        isPopular: false,
+        trending: false,
+        displayOrder: 8
+    },
+    {
+        id: 9,
+        name: 'Digital Marketing',
+        description: 'SEO, Social Media, Content Marketing, and Analytics',
+        icon: 'fas fa-bullhorn',
+        color: '#7C3AED',
+        logo: 'https://images.unsplash.com/photo-1460925895917-adf4e565db18?w=100',
+        bannerImage: 'https://images.unsplash.com/photo-1460925895917-adf4e565db18?w=800',
+        difficultyLevels: ['Beginner', 'Intermediate'],
+        tags: ['seo', 'marketing', 'social-media', 'content-marketing', 'analytics'],
+        isPopular: false,
+        trending: false,
+        displayOrder: 9
+    },
+    {
+        id: 10,
+        name: 'Business & Finance',
+        description: 'Entrepreneurship, Project Management, and Financial Analysis',
+        icon: 'fas fa-chart-line',
+        color: '#059669',
+        logo: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=100',
+        bannerImage: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800',
+        difficultyLevels: ['Beginner', 'Intermediate'],
+        tags: ['business', 'finance', 'project-management', 'entrepreneurship', 'leadership'],
+        isPopular: false,
+        trending: false,
+        displayOrder: 10
+    },
+    {
+        id: 11,
+        name: 'Game Development',
+        description: 'Unity, Unreal Engine, and game design fundamentals',
+        icon: 'fas fa-gamepad',
+        color: '#7C2D12',
+        logo: 'https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?w=100',
+        bannerImage: 'https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?w=800',
+        difficultyLevels: ['Beginner', 'Intermediate', 'Advanced'],
+        tags: ['unity', 'unreal', 'game-design', 'c-sharp', '3d-graphics'],
+        isPopular: false,
+        trending: true,
+        displayOrder: 11
+    },
+    {
+        id: 12,
+        name: 'Blockchain & Crypto',
+        description: 'Cryptocurrency, Smart Contracts, and DeFi development',
+        icon: 'fas fa-link',
+        color: '#B45309',
+        logo: 'https://images.unsplash.com/photo-1518611505868-d2b4a6c66a19?w=100',
+        bannerImage: 'https://images.unsplash.com/photo-1518611505868-d2b4a6c66a19?w=800',
+        difficultyLevels: ['Intermediate', 'Advanced'],
+        tags: ['blockchain', 'crypto', 'solidity', 'smart-contracts', 'defi', 'web3'],
+        isPopular: false,
+        trending: true,
+        displayOrder: 12
+    }
+];
+
+module.exports = enhancedCategoriesData;

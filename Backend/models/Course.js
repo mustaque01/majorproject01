@@ -1,62 +1,36 @@
 const mongoose = require('mongoose');
 
 const resourceSchema = new mongoose.Schema({
+    resourceId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Resource'
+    },
     id: {
-        type: Number,
-        required: true
+        type: Number
     },
     title: {
         type: String,
-        required: true,
         minlength: 3,
         maxlength: 100
     },
     type: {
         type: String,
-        required: true,
-        enum: ['PDF', 'Video', 'Link']
+        enum: ['pdf', 'video', 'link', 'note']
     },
     size: {
-        type: String,
-        validate: {
-            validator: function(v) {
-                if (this.type === 'PDF') {
-                    return /^\d+(\.\d+)?\s*(MB|KB|GB)$/i.test(v);
-                }
-                return true;
-            },
-            message: 'Size format is invalid'
-        }
+        type: String
     },
     duration: {
-        type: String,
-        validate: {
-            validator: function(v) {
-                if (this.type === 'Video') {
-                    return /^\d{1,2}:\d{2}$/.test(v);
-                }
-                return true;
-            },
-            message: 'Duration format should be MM:SS'
-        }
+        type: String
     },
     url: {
-        type: String,
-        validate: {
-            validator: function(v) {
-                if (this.type === 'Link') {
-                    return /^https?:\/\/.+/.test(v);
-                }
-                return true;
-            },
-            message: 'Invalid URL format'
-        }
+        type: String
     },
     progress: {
         type: Number,
-        required: true,
         min: 0,
-        max: 100
+        max: 100,
+        default: 0
     }
 });
 
@@ -79,14 +53,17 @@ const courseSchema = new mongoose.Schema({
         maxlength: 500
     },
     categoryId: {
-        type: Number,
-        required: true,
-        ref: 'Category'
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Category',
+        required: true
+    },
+    instructorId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Instructor',
+        required: true
     },
     instructor: {
         type: String,
-        required: true,
-        minlength: 3,
         maxlength: 50
     },
     duration: {
@@ -146,6 +123,53 @@ const courseSchema = new mongoose.Schema({
         min: 0,
         max: 100,
         default: 0
+    },
+
+    // NEW FIELDS FOR IMPROVEMENTS
+    skills: [{
+        type: String,
+        maxlength: [50, 'Skill cannot exceed 50 characters']
+    }],
+    prerequisites: [{
+        courseId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Course'
+        },
+        courseName: String
+    }],
+    requirements: [{
+        type: String,
+        maxlength: [200, 'Requirement cannot exceed 200 characters']
+    }],
+    certification: {
+        offered: {
+            type: Boolean,
+            default: false
+        },
+        certificateName: String,
+        certificateIcon: String
+    },
+    difficulty: {
+        type: Number,
+        min: 1,
+        max: 10,
+        default: 5
+    },
+    tags: [{
+        type: String,
+        maxlength: 30
+    }],
+    isPopular: {
+        type: Boolean,
+        default: false
+    },
+    trending: {
+        type: Boolean,
+        default: false
+    },
+    version: {
+        type: Number,
+        default: 1
     }
 }, {
     timestamps: true
@@ -154,7 +178,11 @@ const courseSchema = new mongoose.Schema({
 // Create indexes for better performance
 courseSchema.index({ id: 1 });
 courseSchema.index({ categoryId: 1 });
+courseSchema.index({ instructorId: 1 });
 courseSchema.index({ status: 1 });
 courseSchema.index({ level: 1 });
+courseSchema.index({ rating: -1 });
+courseSchema.index({ trending: 1 });
+courseSchema.index({ isPopular: 1 });
 
 module.exports = mongoose.model('Course', courseSchema);
