@@ -56,6 +56,11 @@ const instructorCoursesRoutes = require('./Routes/instructorCoursesApi');
 app.use('/api/instructor-courses', instructorCoursesRoutes);
 console.log('✅ Instructor course management routes loaded successfully');
 
+console.log('🔍 Loading instructor dashboard routes...');
+const instructorDashboardRoutes = require('./Routes/instructorDashboard');
+app.use('/api/instructor', instructorDashboardRoutes);
+console.log('✅ Instructor dashboard routes loaded successfully');
+
 app.use('/api/categories', categoriesRoutes);
 console.log('🔍 Loading resource routes...');
 app.use('/api/resources', resourceRoutes);
@@ -90,8 +95,8 @@ app.get('/api/dashboard', authenticateUser, (req, res) => {
 app.get('/', (req, res) => {
     res.json({
         message: 'Learning Path Dashboard API',
-        version: '2.0.0',
-        features: ['Authentication', 'Role-based Access', 'Student & Instructor Management', 'Course Management'],
+        version: '2.1.0',
+        features: ['Authentication', 'Role-based Access', 'Student & Instructor Management', 'Course Management', 'Instructor Analytics', 'Dashboard'],
         endpoints: [
             // Authentication endpoints
             'POST /api/auth/register - Register new user (student/instructor)',
@@ -111,7 +116,23 @@ app.get('/', (req, res) => {
             'POST /api/instructors - Create new instructor (admin)',
             'PUT /api/instructors/:id - Update instructor (admin/self)',
             'DELETE /api/instructors/:id - Deactivate instructor (admin)',
-            // Instructor Course Management - Protected (Instructors only)
+            // Instructor Dashboard & Analytics (Protected - Instructor only)
+            'GET /api/instructor/dashboard - Get complete instructor dashboard',
+            'GET /api/instructor/performance-summary - Get performance metrics',
+            'GET /api/instructor/earnings?period=monthly - Get earnings report',
+            'GET /api/instructor/reviews - Get all course reviews',
+            'GET /api/instructor/profile - Get instructor profile',
+            'PUT /api/instructor/profile - Update instructor profile',
+            'GET /api/instructor/courses - Get all my courses',
+            'POST /api/instructor/courses - Create new course',
+            'GET /api/instructor/courses/:courseId - Get course details',
+            'PUT /api/instructor/courses/:courseId - Update course',
+            'DELETE /api/instructor/courses/:courseId - Delete course',
+            'POST /api/instructor/courses/:courseId/publish - Publish course',
+            'POST /api/instructor/courses/:courseId/unpublish - Unpublish course',
+            'GET /api/instructor/courses/:courseId/analytics - Get course analytics',
+            'GET /api/instructor/courses/:courseId/stats - Get course statistics',
+            // Legacy Instructor Course Management Routes
             'GET /api/instructor-courses/me/profile - Get current instructor profile',
             'PUT /api/instructor-courses/me/profile - Update instructor profile',
             'GET /api/instructor-courses/me/courses - List all my courses',
