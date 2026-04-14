@@ -45,6 +45,17 @@ mongoose.connect('mongodb://localhost:27017/learnpath-production')
 console.log('🔍 Loading auth routes...');
 app.use('/api/auth', authRoutes);
 console.log('✅ Auth routes loaded successfully');
+
+console.log('🔍 Loading instructor routes...');
+const instructorRoutes = require('./Routes/instructorsApi');
+app.use('/api/instructors', instructorRoutes);
+console.log('✅ Instructor routes loaded successfully');
+
+console.log('🔍 Loading instructor course management routes...');
+const instructorCoursesRoutes = require('./Routes/instructorCoursesApi');
+app.use('/api/instructor-courses', instructorCoursesRoutes);
+console.log('✅ Instructor course management routes loaded successfully');
+
 app.use('/api/categories', categoriesRoutes);
 console.log('🔍 Loading resource routes...');
 app.use('/api/resources', resourceRoutes);
@@ -80,7 +91,7 @@ app.get('/', (req, res) => {
     res.json({
         message: 'Learning Path Dashboard API',
         version: '2.0.0',
-        features: ['Authentication', 'Role-based Access', 'Student & Instructor Management'],
+        features: ['Authentication', 'Role-based Access', 'Student & Instructor Management', 'Course Management'],
         endpoints: [
             // Authentication endpoints
             'POST /api/auth/register - Register new user (student/instructor)',
@@ -90,6 +101,26 @@ app.get('/', (req, res) => {
             'PUT /api/auth/me - Update user profile (requires auth)',
             'PUT /api/auth/change-password - Change password (requires auth)',
             'DELETE /api/auth/me - Deactivate account (requires auth)',
+            // Instructor endpoints - Public
+            'GET /api/instructors - Get all instructors with filtering',
+            'GET /api/instructors/:id - Get instructor details',
+            'GET /api/instructors/top/rated - Get top-rated instructors',
+            'GET /api/instructors/:id/stats - Get instructor statistics',
+            'GET /api/instructors/specialization/:spec - Get instructors by specialization',
+            // Instructor endpoints - Protected
+            'POST /api/instructors - Create new instructor (admin)',
+            'PUT /api/instructors/:id - Update instructor (admin/self)',
+            'DELETE /api/instructors/:id - Deactivate instructor (admin)',
+            // Instructor Course Management - Protected (Instructors only)
+            'GET /api/instructor-courses/me/profile - Get current instructor profile',
+            'PUT /api/instructor-courses/me/profile - Update instructor profile',
+            'GET /api/instructor-courses/me/courses - List all my courses',
+            'POST /api/instructor-courses/me/courses - Create new course',
+            'GET /api/instructor-courses/me/courses/:id/stats - Get course statistics',
+            'PUT /api/instructor-courses/me/courses/:id - Update course',
+            'POST /api/instructor-courses/me/courses/:id/publish - Publish course',
+            'POST /api/instructor-courses/me/courses/:id/unpublish - Unpublish course',
+            'DELETE /api/instructor-courses/me/courses/:id - Delete course',
             // Category endpoints
             'GET /api/categories - Get all categories',
             'GET /api/categories/:id - Get category by ID',

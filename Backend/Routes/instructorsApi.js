@@ -6,38 +6,38 @@
 const express = require('express');
 const router = express.Router();
 const instructorController = require('../controllers/instructorController');
-// const { authenticate, authorize } = require('../middleware/auth');
+const { authenticateUser } = require('../middleware/authReal');
 
 /**
  * Public Routes
  */
 
-// Get all instructors
+// Get all instructors with filtering
 router.get('/', instructorController.getAllInstructors);
 
-// Get single instructor
-router.get('/:id', instructorController.getInstructorById);
-
-// Get top instructors
+// Get top instructors by rating
 router.get('/top/rated', instructorController.getTopInstructors);
-
-// Get instructor statistics
-router.get('/:id/stats', instructorController.getInstructorStats);
 
 // Get instructors by specialization
 router.get('/specialization/:specialization', instructorController.getInstructorsBySpecialization);
+
+// Get single instructor (must be last to avoid route conflicts)
+router.get('/:id', instructorController.getInstructorById);
+
+// Get instructor statistics
+router.get('/:id/stats', instructorController.getInstructorStats);
 
 /**
  * Protected Routes (Admin only)
  */
 
-// Create instructor
-// router.post('/', authenticate, authorize(['admin']), instructorController.createInstructor);
+// Create instructor (Admin only)
+router.post('/', authenticateUser, instructorController.createInstructor);
 
-// Update instructor
-// router.put('/:id', authenticate, authorize(['admin']), instructorController.updateInstructor);
+// Update instructor (Admin or self)
+router.put('/:id', authenticateUser, instructorController.updateInstructor);
 
-// Delete instructor
-// router.delete('/:id', authenticate, authorize(['admin']), instructorController.deleteInstructor);
+// Delete instructor (Admin only)
+router.delete('/:id', authenticateUser, instructorController.deleteInstructor);
 
 module.exports = router;
