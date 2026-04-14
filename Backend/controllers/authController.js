@@ -7,6 +7,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/UserReal');
+const Instructor = require('../models/Instructor');
 const validator = require('validator');
 
 // JWT Configuration
@@ -143,6 +144,42 @@ const registerUser = async (req, res) => {
 
         console.log('✅ User created successfully with ID:', savedUser._id);
 
+        // 7.5 CREATE INSTRUCTOR PROFILE IF ROLE IS INSTRUCTOR
+        if (role === 'instructor') {
+            try {
+                console.log('👨‍🏫 Creating instructor profile...');
+                
+                const instructorData = {
+                    name: `${firstName.trim()} ${lastName.trim()}`,
+                    email: email.toLowerCase().trim(),
+                    userId: savedUser._id,
+                    specialization: specialization?.trim() || 'General',
+                    yearsOfExperience: 0,
+                    isActive: true,
+                    isVerified: false,
+                    bio: `${firstName.trim()} ${lastName.trim()} - Verified Instructor`,
+                    certifications: [],
+                    skills: [],
+                    profileImage: null,
+                    socialLinks: {},
+                    totalStudents: 0,
+                    averageRating: 0,
+                    coursesCreated: 0
+                };
+
+                const newInstructor = new Instructor(instructorData);
+                const savedInstructor = await newInstructor.save();
+
+                console.log('✅ Instructor profile created successfully with ID:', savedInstructor._id);
+
+            } catch (instructorError) {
+                console.error('⚠️ Error creating instructor profile:', instructorError.message);
+                // Don't fail the entire registration, but log the error
+                // The user is created, but without an instructor profile
+                // This can be populated later
+            }
+        }
+
         // 8. GENERATE JWT TOKENS
         const accessToken = jwt.sign(
             {
@@ -190,7 +227,9 @@ const registerUser = async (req, res) => {
         // 11. SEND SUCCESS RESPONSE
         res.status(201).json({
             success: true,
-            message: 'User registered successfully',
+            message: role === 'instructor' 
+                ? 'Instructor account registered successfully. Your profile is ready to create courses!'
+                : 'User registered successfully',
             data: {
                 user: userResponse,
                 accessToken,
@@ -375,7 +414,28 @@ const loginUser = async (req, res) => {
 
         console.log('🎉 Login successful for user:', user.email);
 
-        // 8.5. AWARD DAILY LOGIN BONUS (for students only)
+        // 8.5 FETCH INSTRUCTOR PROFILE IF INSTRUCTOR
+        let instructorProfile = null;
+        if (user.role === 'instructor') {
+            try {
+                instructorProfile = await Instructor.findOne({ userId: user._id }).lean();
+                if (instructorProfile) {
+                    userResponse.instructorId = instructorProfile._id;
+                    userResponse.instructorProfile = {
+                        specialization: instructorProfile.specialization,
+                        yearsOfExperience: instructorProfile.yearsOfExperience,
+                        totalStudents: instructorProfile.totalStudents,
+                        averageRating: instructorProfile.averageRating,
+                        coursesCreated: instructorProfile.coursesCreated,
+                        isVerified: instructorProfile.isVerified
+                    };
+                }
+            } catch (instructorError) {
+                console.log('⚠️ Warning: Could not fetch instructor profile:', instructorError.message);
+            }
+        }
+
+        // 8.7. AWARD DAILY LOGIN BONUS (for students only)
         let dailyBonusInfo = null;
         if (user.role === 'student') {
             try {
